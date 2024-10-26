@@ -19,8 +19,9 @@ Python Scripting & Programming  |   Time Management
 
 ### Certifications ###
 <div>
-<img src="https://img.shields.io/badge/-Security%2B-FF0000?&style=for-the-badge&logo=CompTIA&logoColor=white" />
-<img src="https://img.shields.io/badge/-Google%20IT%20Support%20Certification-4285F4?&style=for-the-badge&logo=Google&logoColor=white" />
+<img src="https://img.shields.io/badge/-Security%2B-FF0000?&style=for-the-badge&logo=CompTIA&logoColor=white" /> - ongoing
+  <br>
+<img src="https://img.shields.io/badge/-Google%20IT%20Support%20Certification-4285F4?&style=for-the-badge&logo=Google&logoColor=white" /> - ongoing
 </div>
 
 ### Projects & Write-ups ###

@@ -1,0 +1,316 @@
+Goal:
+
+learning & development
+
+brushing up on skills
+
+Requirements
+
+take input and add tasks
+
+check inputs
+
+list tasks 
+
+edit existing tasks
+
+able to tick them off / complete them
+
+Future updates:
+
+visual aestetics updated
+
+add time & date deadlines
+
+more functionability & integration
+
+Initial plan:
+
+define main function as a list of tasks
+
+print main menu of options & list of tasks
+
+promt user to select option from menu
+
+options are: add tasks, complete task, exit
+
+check input to ensure is interger and number from list
+
+# **To-Do List in Python**
+
+#forgot how fun this kind of problem solving can be
+
+**Goals on project:**
+
+- create a customisable to do list that lets users manage their daily task list
+- learn, develop new skills
+- have fun
+
+**Requirements**
+
+- **Task Management**:
+    - Add new tasks to the list.
+    - Edit existing tasks.
+    - Mark tasks as completed.
+- **User Interface**:
+    - Provide clear prompts and feedback.
+    - Display the current list of tasks.
+- **Error Handling**:
+    - Validate user inputs to prevent crashes.
+    - Handle invalid selections gracefully.
+
+**Initial development**
+
+We need to create a function for the tasks list. And would be great to print active tasks at the top before listing current options for the user.
+
+```python
+def main():
+    tasks = []
+    while True:
+        print("##### Your active tasks are: #####")
+        print(tasks)
+```
+
+The options should be add tasks, edit tasks (so we don’t have to complete & add new for minor changes), mark as completed and exit.
+
+```python
+print('\n##### To-Do List #####')
+        print('1. Add New Task')
+        print('2. Edit Tasks')
+        print('3. Mark Task as Completed')
+        print('4. Exit\n')
+```
+
+Now we can take user input, check to make sure it’s an interger in the list and work through our option.
+
+```python
+while True:
+            try:
+                choice = int(input('Select your choice: '))
+                if 1 <= choice <= 4:
+                    break #input is valid
+                else:
+                    print('Your choice is invalid. Please enter a number between 1 and 4.')
+            except ValueError:
+                print('Invalid input. Please enter a number between 1 and 4.')
+```
+
+Option 1: Add a new task. Get input from user and amend tasks list. To help speed up the process of adding multiple tasks at once, we prompt the user to choose how many tasks they’d like to add first before adding them to the list.
+
+```python
+ if choice == 1:
+            print( )
+            n_tasks = int(input('How many tasks would you like to add now? '))  #ability to add multiple tasks at once to improve UX
+
+            for i in range(n_tasks):
+                task = input('Please enter your task: ')
+                tasks.append({'task': task, 'done': False})
+                print('Task added!')
+```
+
+Option 2: Edit an existing task. We first need to check we have tasks in the list and the option choosen is part of the list, before modifying the task.
+
+```python
+elif choice ==2:
+            #check tasks in list
+            if len(tasks) == 0:
+                print('There are currently no active tasks in your list. Please input some tasks first./n')
+            else:
+                print('Here are your current tasks:')
+                for index, task in enumerate(tasks, start=1):
+                    print(f"{index}. {task['task']} (Done: {task['done']})")
+                #get task number to edit & append
+                try:
+                    task_number = int(input('Enter the number of the task you want to edit: '))
+                    if 1 <= task_number <= len(tasks):
+                        task_to_edit = tasks[task_number - 1]
+                        new_value = input('Enter the additional details to add to the task: ')
+                        task_to_edit['task'] += ' ' + new_value
+                        print('Task updated successfully!')
+                    else:
+                        print('Invalid task number.')
+                except ValueError:
+                    print('Please enter a valid option for the task number.')
+```
+
+Option 3: Complete a task and mark it off the list. I think there are 2 options here: either delete completed tasks entirely or keep them, but not show them. Option 2 sounds a lot better, but initial implementation of this led to a mismatch between the task number diplayed and task number stored in the list once you start to complete them. This meant that the user was unable to mark tasks as completed. 
+
+For example: We have the 2 tasks: make list & complete list. We mark *make list* as complete and the code returns us the list of active tasks: *1. complete list.* When trying to mark this as completed by choosing task 1, nothing happens. This is because the task 1 we are choosing is still *make list*, marked as completed, but not displayed.
+
+To fix this we create a temporary list of active tasks and use index to mark tasks as done.
+
+```python
+elif choice == 3:
+            if len(tasks) == 0:
+                print('There are no tasks to mark as done.')
+            else:
+                try:
+                    task_index = int(input("Enter the task number to mark as done: ")) - 1
+                    if 0 <= task_index < len(tasks):
+                        tasks[task_index]['done'] = True
+                        print("Task marked as done!\n")
+                    else:
+                        print("Invalid task number.")
+                except ValueError:
+                    print('Please enter a valid integer for the task number.')
+```
+
+Option 4: Exit program.
+
+```python
+elif choice == 4:
+            print('\nExiting the To-Do List. Thank you for using the service!')
+            break
+```
+
+Modifications & Debugging
+
+- Added options to input multiple tasks at once (explained above)
+- Added option for complete tasks to show up as ~~strikethrough~~
+    - input code for strikethrough and reset formatting in the beginning
+        
+        ```python
+        def main():
+            tasks = []
+            strikethrough = "\033[9m"  #code for strikethrough
+            reset = "\033[0m"          #code to reset formatting
+        
+            while True:
+                print("##### Your active tasks are: #####")
+                if tasks:
+                    active_tasks = [task for task in tasks if not task['done']]
+                    for i, task in enumerate(tasks, start=1):
+                        if task['done']:
+                            print(f"{i}. {strikethrough}{task['task']}{reset}")  #strikethrough completed tasks
+                        else:
+                            print(f"{i}. {task['task']}")
+        ```
+        
+- If no tasks are active, added output to state this. First we need to check if there are any active tasks
+
+```python
+while True:
+        print("##### Your active tasks are: #####")
+        if tasks:
+            active_tasks = [task for task in tasks if not task['done']]
+            for i, task in enumerate(tasks, start=1):
+                if task['done']:
+                    print(f"{i}. {strikethrough}{task['task']}{reset}")  #strikethrough completed tasks
+                else:
+                    print(f"{i}. {task['task']}")
+        else:
+            print('There are currently no active tasks on your list!')
+```
+
+**In action:**
+
+```html
+##### Your active tasks are: #####
+There are currently no active tasks on your list!
+
+##### To-Do List #####
+1. Add New Task
+2. Edit Tasks
+3. Mark Task as Completed
+4. Exit
+
+Select your choice: 1
+
+How many tasks would you like to add now? 5
+Please enter your task: create program
+Task added!
+
+Please enter your task: solve errors
+Task added!
+
+Please enter your task: create list
+Task added!
+
+Please enter your task: do tasks
+Task added!
+
+Please enter your task: complete list
+Task added!
+
+##### Your active tasks are: #####
+1. create program
+2. solve errors
+3. create list
+4. do tasks
+5. complete list
+
+##### To-Do List #####
+1. Add New Task
+2. Edit Tasks
+3. Mark Task as Completed
+4. Exit
+
+Select your choice: 3
+Enter the task number to mark as done: 1
+Task marked as done!
+
+##### Your active tasks are: #####
+1. ~~create program~~
+2. solve errors
+3. create list
+4. do tasks
+5. complete list
+
+##### To-Do List #####
+1. Add New Task
+2. Edit Tasks
+3. Mark Task as Completed
+4. Exit
+
+Select your choice: 3
+Enter the task number to mark as done: 2
+Task marked as done!
+
+##### Your active tasks are: #####
+1. ~~create program~~
+2. ~~solve errors~~
+3. create list
+4. do tasks
+5. complete list
+
+##### To-Do List #####
+1. Add New Task
+2. Edit Tasks
+3. Mark Task as Completed
+4. Exit
+
+Select your choice: 3
+Enter the task number to mark as done: 3
+Task marked as done!
+
+##### Your active tasks are: #####
+1. ~~create program~~
+2. ~~solve errors~~
+3. ~~create list~~
+4. do tasks
+5. complete list
+
+##### To-Do List #####
+1. Add New Task
+2. Edit Tasks
+3. Mark Task as Completed
+4. Exit
+
+Select your choice: 4
+
+Exiting the To-Do List. Thank you for using the service!
+```
+
+**Improvements for future (will need different programming language for some):**
+
+- Edit task function to replace task entirely instead of appending it
+- Allocate completed tasks to different list & write to memory to be able to be displayed in the future
+- Add time, dates and deadlines
+- Make it shareable and collaborative
+
+**Things that I learned from this**
+
+- improved input validation and error handling
+- user interface design and output formatting
+- project structure & organisation
+- documentation

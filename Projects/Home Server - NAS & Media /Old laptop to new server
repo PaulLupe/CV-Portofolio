@@ -1,0 +1,66 @@
+# **Turning an Old ASUS Q525UN into a Home Server for NAS and Media** 
+
+This project details my experience of repurposing an older ASUS 1525UN laptop into a new home server for a first itteration of Network Attached Storage (NAS) and media streaming. Using Ubuntu Server, I configured the laptop to run efficiently with minimal interaction and support continuous operation. This setup allows us to use the server for file storage and media streaming across our local network.
+
+## **Specs**
+Intel Core i7-8550U
+Intel UHD Graphics 620
+1TB SSD (already upgraded from base HDD due to TERRIBLE performance on Win10)
+16 GB RAM
+Ubuntu 24.04.1 LTS
+
+### **Installing Ubuntu Server
+I wanted Ubuntu to maximize performance on the laptop hardware and since we don't really need an UI since we'll mostly be using our main computer to work on the server.
+
+From the get-go this has been the biggest challenge as the bootable USB I created initially did not boot at all. To troubleshoot this, unsuccesfully might I add, I:
+ - checked BIOS configuration to make sure Fast Boot and Secure Boot are disabled
+ - tried multiple USB ports as this is one of the most common issues
+ - tried to remake the bootable USB using different configurations (both MBR and GTP partition scheme) in Rufus then switching to balenaEtcher (which is the software used in Ubuntu's tutorial) 
+ - manually added new boot options from USB in BIOS for the efi files (/EFI/boot/grubx64.efi and /EFI/boot/bootx64.efi)
+ - updated BIOS to the newest version
+Finally, I decided to change the USB to one I used in the past for other Linux distributions and this was successful from first try with all base options.
+
+### **Setting up Ubuntu Server**
+Once Ubuntu Server was installed, I connected the server to my home network and assigned it a static IP address. This makes it easier to connect to the server from other devices on the network.
+To make sure the laptop stays operational at all times, I had to modify the logind.conf file to ignore lid switch (not before creating a backup just in case):
+1. Edit logind.conf with sudoedit /etc/systemd/logind.conf
+2. Change the 3 lines containing HandleLidSwitch and set value to ignore. These 3 were commented out so had to also delete the # symbol. 
+3. Save & restart systemd-logind: sudo service systemd-logind restart
+
+Next, we want to make sure we have **OpenSSH** to manage the server remotely. We install the server version and use the static IP we configured earlier to connect to it from our main machine.
+1. Install: sudo apt install openssh-server
+2. Connect: ssh user@192.168.1.12
+![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/ecff9e7f-a9d3-4831-9d5c-fde2a063d678/f5d15675-75bc-4ffe-94fd-8287c2f44586/image.png)
+
+### **Samba File Sharing**
+In order to enable file sharing, we will be using **Samba**. Through our SSH connection we install it using sudo apt install samba & start creating the folder for our files and change the owndership to be able to access them.
+1. Create folder: sudo mkdir /media/myfiles
+2. Change user owndership: sudo chown $USER: /media/myfiles
+3. Edit configuration to make sure we don't login as guest and have access to the files: sudo nano /etc/samba/smb.conf
+      i. change map to guest = bad user to map to guest = never
+      ii. add the folder we create to the end of the file:
+                [myfiles]
+                path = /media/myfiles
+                writeable=yes
+                public=no
+      iii. Save by pressing Ctrl + X, then Y and Enter.
+
+4. Set a password for Samba: sudo smbpasswd -a user
+5. Restart Samba and make sure changes go through: sudo systemctl restart smbd
+
+On Windows client, in Explorer, we right-click This PC and select "Map Netwrok Drive". We enter the server IP and click browse to ensure we can see the folders and we're done. We have access to the folders on the server. From here we can create folders as needed. For now, we create only the movies and shows folders.
+
+### **Jellyfin**
+To enable media streaming, we are using Jellyfin, an open-source media server. This is a rather easy step. We only need to install Jellyfin on our server and allocate Movies and Shows folders to respective folders on the server that we already created.
+1. Install Jellyfin: curl https://repo.jellyfin.org/install-debuntu.sh | sudo bash
+2. Configure Jellyfin from the browser by navigating to http://serverip:8096.
+3. Follow the setup wizard and point the movies to the /media/myfiles/movies folder and the shows to the /media/myfiles/shows folder
+Now we can stream media stored on the server fron any device on the network.
+
+Future Improvements to be added at a later stage:
+ - Storage Expansion:
+        I plan to add additional hard drives configured with RAID for redundancy, making the server a more robust backup solution.
+ - Remote Access with VPN:
+        Setting up a VPN will allow secure access to files and media from outside the local network.
+ - Wake-on-LAN:
+        Configuring Wake-on-LAN for this server will make it easy to start up remotely when needed, improving on-the-go accessibility.

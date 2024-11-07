@@ -27,6 +27,7 @@ Python Scripting & Programming       |   Time Management
 ### Projects & Write-ups ###
 #Completed:
 - To do list
+- NAS & Media server
 
 #Active (needs write-up)
 - Security Home Lab (Firewall, SIEM, AD, Metasploitable)

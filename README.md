@@ -9,13 +9,13 @@ From an early age, I loved tinkering with technology and electronics around the 
 Apply my passion and interest in technology through projects to showcase my skills and transition into a role in IT as an IT Support Analyst and eventually as a Cybersecurity Analyst.
 
 ### Skills ###
-Windows & Linux                 |   Troubleshooting 
-Virtualization                  |   SQL
-Cybersecurity                   |   Stakeholder Management
-Office 365                      |   Analytical Thinking
-Networking                      |   Problem Solving
-System Administration           |   Excellent Written and Verbal Communication
-Python Scripting & Programming  |   Time Management
+Windows Server Administration        |   Virtualization 
+Active Directory                     |   Cybersecurity
+Networking (TCP/IP, DHCP, DNS)       |   Stakeholder Management
+Troubleshooting and Problem Solving  |   Analytical Thinking
+Office 365                           |   Problem Solving
+System Administration                |   Excellent Written and Verbal Communication
+Python Scripting & Programming       |   Time Management
 
 ### Certifications ###
 <div>
@@ -28,7 +28,7 @@ Python Scripting & Programming  |   Time Management
 #Completed:
 - To do list
 
-#Active
+#Active (needs write-up)
 - Security Home Lab (Firewall, SIEM, AD, Metasploitable)
 - HackTheBox labs
 - Keylogger
